@@ -1,15 +1,9 @@
 const express = require("express");
 const pokemonRouter = express.Router();
-const {
-  pokemontModel,
-  typeModel,
-  weatherModel,
-} = require("../model/relations");
-
-
+const { Pokemon, Type, Weather } = require("../model/relations");
 
 // Create route
-pokemonRouter.post("/api/pokemon", async (req, res, next) => {
+pokemonRouter.post("/api/pokemonadd", async (req, res, next) => {
   try {
     // Extract Pokemon data from the request body
     const {
@@ -38,8 +32,8 @@ pokemonRouter.post("/api/pokemon", async (req, res, next) => {
       futureEvolve,
       "100CPat40": CPat40,
       "100CPat39": CPat39,
-      types, // Assuming types is an array of type names
-      weathers, // Assuming weathers is an array of weather names
+      types,
+      weathers,
     } = req.body;
 
     // Find or create types and weathers
@@ -79,10 +73,10 @@ pokemonRouter.post("/api/pokemon", async (req, res, next) => {
       "100CPat40": CPat40,
       "100CPat39": CPat39,
     });
-
+    console.log(Object.getPrototypeOf(newPokemon));
     // Add associations with types and weathers
     await newPokemon.setTypes(createdTypes);
-    await newPokemon.setWeathers(createdWeathers);
+    await newPokemon.setWeather(createdWeathers);
 
     res.status(201).json(newPokemon);
   } catch (error) {
@@ -90,5 +84,27 @@ pokemonRouter.post("/api/pokemon", async (req, res, next) => {
     next(error);
   }
 });
+// Get route for a specific Pokemon by ID
+pokemonRouter.get("/api/pokemon/:id", async (req, res, next) => {
+  try {
+    const pokemonId = req.params.id;
 
+    // Find the Pokemon by ID with its associated types and weathers
+    const foundPokemon = await Pokemon.findByPk(pokemonId, {
+      include: [
+        { model: Type, through: "PokemonType" },
+        { model: Weather, through: "PokemonWeather" },
+      ],
+    });
+
+    if (!foundPokemon) {
+      return res.status(404).json({ message: "Pokemon not found" });
+    }
+
+    res.status(200).json(foundPokemon);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 module.exports = pokemonRouter;

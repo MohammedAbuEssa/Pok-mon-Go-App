@@ -1,15 +1,15 @@
 "use strict";
 // Set All relations
-const { pokemontModel, typeModel, weatherModel } = require("./index");
+const { Pokemon, Type, Weather } = require("./index");
 
-pokemontModel.belongsToMany(typeModel, { through: "PokemonTypes" });
-pokemontModel.belongsToMany(weatherModel, { through: "PokemonWeathers" });
+Pokemon.belongsToMany(Type, { through: "PokemonType" });
+Pokemon.belongsToMany(Weather, { through: "PokemonWeather" });
 
-typeModel.belongsToMany(pokemontModel, { through: "PokemonTypes" });
-weatherModel.belongsToMany(pokemontModel, { through: "PokemonWeathers" });
+Type.belongsToMany(Pokemon, { through: "PokemonType" });
+Weather.belongsToMany(Pokemon, { through: "PokemonWeather" });
 
 module.exports = {
-  pokemontModel,
-  typeModel,
-  weatherModel,
+  Pokemon,
+  Type,
+  Weather,
 };

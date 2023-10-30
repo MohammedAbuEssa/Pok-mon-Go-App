@@ -24,7 +24,7 @@ const weatherModel = require("./WeatherModel")(sequelize, DataTypes);
 module.exports = {
   sequelize,
   DataTypes,
-  pokemontModel,
-  typeModel,
-  weatherModel
+  Pokemon: pokemontModel,
+  Type: typeModel,
+  Weather: weatherModel,
 };
