@@ -1,6 +1,77 @@
 const express = require("express");
 const pokemonRouter = express.Router();
+const { upload } = require("../middleware/upload");
+const XLSX = require("xlsx");
 const { Pokemon, Type, Weather } = require("../model/relations");
+
+pokemonRouter.post(
+  "/api/pokemons/upload",
+  upload("file"),
+  async (req, res, next) => {
+    try {
+      // Read the Excel file
+      const workbook = XLSX.readFile(req.file.path);
+      const workSheets = workbook.Sheets[workbook.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(workSheets);
+
+      // Process each row in the Excel sheet
+      const pokemonPromises = data.map(async (item) => {
+        // Find or create types and weathers
+        const [createdTypes] = await Type.findOrCreate({
+          where: { name: item.types },
+        });
+
+        const [createdWeathers] = await Weather.findOrCreate({
+          where: { name: item.weathers },
+        });
+
+        // Create the Pokemon record
+        const newPokemon = await Pokemon.create({
+          name: item.name,
+          pokedexNumber: item.pokedexNumber,
+          imgName: item.imgName,
+          generation: item.generation,
+          evolutionStage: item.evolutionStage,
+          evolved: item.evolved,
+          familyID: item.familyID,
+          crossGen: item.crossGen,
+          statTotal: item.statTotal,
+          ATK: item.ATK,
+          DEF: item.DEF,
+          STA: item.STA,
+          legendary: item.legendary,
+          acquireable: item.acquireable,
+          spawns: item.spawns,
+          regional: item.regional,
+          raidable: item.raidable,
+          hatchable: item.hatchable,
+          shiny: item.shiny,
+          nest: item.nest,
+          new: item.new,
+          notGettable: item.notGettable,
+          futureEvolve: item.futureEvolve,
+          "100CPat40": item.CPat40,
+          "100CPat39": item.CPat39,
+        });
+
+        // Add associations with types and weathers
+        await newPokemon.setTypes(createdTypes);
+        await newPokemon.setWeather(createdWeathers);
+
+        // Return the created Pokemon record
+        return newPokemon;
+      });
+
+      // Wait for all Pokemon creation promises to resolve
+      const pokemonRecords = await Promise.all(pokemonPromises);
+
+      res.status(201).json(pokemonRecords);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
 
 // Create route
 pokemonRouter.post("/api/pokemons", async (req, res, next) => {

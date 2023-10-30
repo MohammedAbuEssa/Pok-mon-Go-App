@@ -16,7 +16,7 @@ const Pokemon = (Sequelize, DataTypes) =>
       type: DataTypes.INTEGER,
     },
     evolutionStage: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     evolved: {
       type: DataTypes.BOOLEAN,
@@ -40,10 +40,10 @@ const Pokemon = (Sequelize, DataTypes) =>
       type: DataTypes.INTEGER,
     },
     legendary: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
     },
     acquireable: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
     },
     spawns: {
       type: DataTypes.BOOLEAN,
@@ -52,10 +52,10 @@ const Pokemon = (Sequelize, DataTypes) =>
       type: DataTypes.BOOLEAN,
     },
     raidable: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
     },
     hatchable: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
     },
     shiny: {
       type: DataTypes.BOOLEAN,
@@ -81,4 +81,3 @@ const Pokemon = (Sequelize, DataTypes) =>
   });
 
 module.exports = Pokemon;
-
