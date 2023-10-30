@@ -102,18 +102,54 @@ pokemonRouter.get("/api/pokemons/:id", async (req, res, next) => {
 
   res.status(200).json(foundPokemon);
 });
-//Get All Pokemon
+
+// Get route for all Pokemons with optional filters, pagination, and search
 pokemonRouter.get("/api/pokemons", async (req, res, next) => {
   try {
-    // Retrieve all Pokemons with their associated types and weathers
-    const allPokemons = await Pokemon.findAll({
-      include: [
-        { model: Type, through: "PokemonType" },
-        { model: Weather, through: "PokemonWeather" },
-      ],
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * pageSize;
+
+    // Filters
+    const filters = {
+      generation: req.query.generation,
+      legendary: req.query.legendary,
+      type: req.query.type,
+      weather: req.query.weather,
+    };
+
+    // Build filter conditions
+    const filterConditions = {};
+    if (filters.generation) filterConditions.generation = filters.generation;
+    if (filters.legendary !== undefined)
+      filterConditions.legendary = filters.legendary;
+
+    // Include associated types and weathers
+    const includeConditions = [];
+    if (filters.type !== undefined) {
+      includeConditions.push({
+        model: Type,
+        through: "PokemonType",
+        where: { name: filters.type },
+      });
+    }
+    if (filters.weather !== undefined) {
+      includeConditions.push({
+        model: Weather,
+        through: "PokemonWeather",
+        where: { name: filters.weather },
+      });
+    }
+
+    const { count, rows: pokemons } = await Pokemon.findAndCountAll({
+      where: filterConditions,
+      include: includeConditions,
+      offset,
+      limit: pageSize,
     });
 
-    res.status(200).json(allPokemons);
+    res.status(200).json({ count, page, pageSize, pokemons });
   } catch (error) {
     console.error(error);
     next(error);
