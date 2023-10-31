@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const pokemonRouter = require("./routes/pokemonRouter");
+const pokemonRouter = require("./routes/pokemonRoutes");
 app.use(cors());
 
 app.use(express.json());
