@@ -61,7 +61,6 @@ async function uploadFromExcelHandler(req, res, next) {
 
     res.status(201).json(pokemonRecords);
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -136,34 +135,35 @@ async function createHandler(req, res, next) {
       "100CPat40": CPat40,
       "100CPat39": CPat39,
     });
-    console.log(Object.getPrototypeOf(newPokemon));
     // Add associations with types and weathers
     await newPokemon.setTypes(createdTypes);
     await newPokemon.setWeather(createdWeathers);
 
     res.status(201).json(newPokemon);
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
 
 async function getOneHandler(req, res, next) {
-  const pokemonId = req.params.id;
+  try {
+    const pokemonId = req.params.id;
 
-  // Find the Pokemon by ID with its associated types and weathers
-  const foundPokemon = await Pokemon.findByPk(pokemonId, {
-    include: [
-      { model: Type, through: "PokemonType" },
-      { model: Weather, through: "PokemonWeather" },
-    ],
-  });
+    const foundPokemon = await Pokemon.findByPk(pokemonId, {
+      include: [
+        { model: Type, through: "PokemonType" },
+        { model: Weather, through: "PokemonWeather" },
+      ],
+    });
 
-  if (!foundPokemon) {
-    return res.status(404).json({ message: "Pokemon not found" });
+    if (!foundPokemon) {
+      return res.status(404).json({ message: "Pokemon not found" });
+    }
+
+    res.status(200).json(foundPokemon);
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(foundPokemon);
 }
 
 async function getAllHandlerWithFilters(req, res, next) {
@@ -217,7 +217,6 @@ async function getAllHandlerWithFilters(req, res, next) {
 
     res.status(200).json({ count, page, pageSize, pokemons });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
@@ -242,7 +241,6 @@ async function deleteHandler(req, res, next) {
 
     res.status(204).send(); // 204 No Content for successful deletion
   } catch (error) {
-    console.error(error);
     next(error);
   }
 }
