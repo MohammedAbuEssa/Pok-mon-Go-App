@@ -2,6 +2,17 @@
 
 ### [Live URL](https://pokemon-docker.onrender.com/)
 
+Use the following buttons to quickly navigate to different sections:
+
+| Table of contents                                       |
+| ------------------------------------------------------- |
+| [Project Structure](#project-structure)                 |
+| [Prerequisites](#prerequisites)                         |
+| [Features](#features)                                   |
+| [Getting Started](#getting-started)                     |
+| [Uploading Pokémon Records](#uploading-pokémon-records) |
+| [API Documentation](#api-documentation)                 |
+
 Welcome to the **Pokémon Go App**, a dynamic application that allows you to explore the exciting world of Pokémon! Whether you're a seasoned Pokémon Trainer or just starting your journey, this app provides a comprehensive platform for managing, discovering, and interacting with your favorite Pokémon.
 
 # Project Structure
@@ -77,6 +88,6 @@ To upload Pokémon records from an Excel file, use the provided template:
 
 - Fill in the Pokémon details in the template.
 
-## Documentation
+## API Documentation
 
 **For comprehensive API documentation, including available endpoints, request/response formats, and usage examples, refer to [API Documentation](https://documenter.getpostman.com/view/11572105/2s9YXcdQ8J).**
